@@ -1,5 +1,7 @@
 <?php
 include ('_assets/classes/header.inc.php');
+$Market->setData();
+$process = $Market->process();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +20,7 @@ include ('_assets/classes/header.inc.php');
 <body>
     <?php include ("_assets/includes/navbar.inc.php") ?>
     <div class="container">
-        
+        <?php print $process; ?>
     </div>
 
     <script src="_assets/js/bootstrap.bundle.min.js"></script>

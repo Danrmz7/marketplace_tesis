@@ -19,17 +19,18 @@
         <!-- <button type="submit" class="btn btn-success btn-lg btn-block"><i class="icon-unlock2"></i> Iniciar Sesión</button> -->
 	</form>
     <div class="form">
-        <img src="_assets/img/logo.png" width="50">
+        <!-- <img src="_assets/img/logo.png" width="50">
         <form class="register-form">
         <input type="text" placeholder="name"/>
         <input type="password" placeholder="password"/>
         <input type="text" placeholder="email address"/>
         <button>create</button>
-        <p class="message">Already registered? <a href="#">Sign In</a></p>
+        <p class="message">Already registered? <a href="#">Sign In</a></p> -->
     </form>
-        <form class="login-form" method="post" role="form" action="./">
-        <input type="text" placeholder="username"/>
-        <input type="password" placeholder="password"/>
+    <form class="login-form" method="post" role="form" action="./">
+        <img src="_assets/img/logo.png" width="50">
+        <input type="text" name="correo_comprador" placeholder="username"/>
+        <input type="password" name="contrasena_comprador" placeholder="password"/>
         <button>login</button>
         <label for="remember-me"> Remember Me</label>
         <p style="color:darkred;"><?php echo ($_GET['error']?$_GET['error']:''); ?></p>

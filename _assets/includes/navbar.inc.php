@@ -17,7 +17,8 @@
                     <a class="nav-link" href="#">Recompensas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                    <!-- <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
+                    <a class="nav-link" href="./?logout=1">Cerrar Sesión De TU Cola</a>
                 </li>
             </ul>
         </div>

@@ -31,7 +31,7 @@ header("Cache-control: private");
     $MySqlHandler->Query("SET NAMES utf8");
 
     $secure     = new Secure($MySqlHandler, $database_name, $table_users, $unField, $psField, $idField, 'remember_me' , '', 'pos_secure', 'login.php', true);
-    $Market      = new Market($MySqlHandler/*, $secure->getCurrentUser()*/);
+    $Market      = new Market($MySqlHandler, $secure->getCurrentUser());
     // $Productos      = new Products($MySqlHandler/*, $secure->getCurrentUser()*/);
 
 

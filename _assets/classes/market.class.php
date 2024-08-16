@@ -16,10 +16,10 @@ class Market {
     var $alert;
   
     /*---------------------------------*/
-    public function __construct($sql/*, $getCurrentUser*/){
+    public function __construct($sql, $getCurrentUser){
       
       $this->sql        = $sql;
-      //$this->_user      = $getCurrentUser;
+      $this->_user      = $getCurrentUser;
     }
   
     /** 

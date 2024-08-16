@@ -74,10 +74,10 @@ class Secure {
     public $currentPassword;
     public $currentId;
 
-    private $_nuterraDb="DanielAyala";
+    private $_nuterraDb="Irving";
     private $_db;
   
-    function Secure($sql, $db, $table, $unField /*= 'username'*/, $psField /*= 'password'*/, $idField /*= 'id'*/, $remField = 'remember_me', $lvlField = '', $secureName = 'secure', $loginPage /*= 'login.php'*/, $use_md5 = true) {     
+    function __construct($sql, $db, $table, $unField /*= 'username'*/, $psField /*= 'password'*/, $idField /*= 'id'*/, $remField = 'remember_me', $lvlField = '', $secureName = 'secure', $loginPage /*= 'login.php'*/, $use_md5 = true) {     
     $this->sql = $sql; 
     $this->_db = $db;
     $this->table = $table;

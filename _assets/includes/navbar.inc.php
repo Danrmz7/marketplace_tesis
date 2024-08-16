@@ -18,7 +18,7 @@
                 </li>
                 <li class="nav-item">
                     <!-- <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
-                    <a class="nav-link" href="./?logout=1">Cerrar Sesión De TU Cola</a>
+                    <a class="nav-link" href="./?logout=1">Cerrar Sesión De <?php echo $get_user['nombre_comprador']; ?></a>
                 </li>
             </ul>
         </div>

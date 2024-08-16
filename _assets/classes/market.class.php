@@ -16,10 +16,10 @@ class Market {
     var $alert;
   
     /*---------------------------------*/
-    public function __construct($sql, $getCurrentUser){
+    public function __construct($sql/*, $getCurrentUser*/){
       
       $this->sql        = $sql;
-      $this->_user      = $getCurrentUser;
+      //$this->_user      = $getCurrentUser;
     }
   
     /** 
@@ -135,30 +135,25 @@ class Market {
             
             $output .= '<div class="container mt-5"> 
                             <div class="row">
-                                <div class="col-sm">';
-                                
-                                    if ($producto_seleccionado['foto_producto'])
-                                    {
-                                        # code...
-                                    $output .= '<img src="_assets/img/productos/'.$producto_seleccionado['foto_producto'].'" width="200">';
-                                    }else 
-                                    {
-                                    # code...
-                                    $output .= '<img src="_assets/img/productos/default.jpg" width="100">';
-                                    }
+                                <div class="col">';
+                            if ($producto_seleccionado['foto_producto'])
+                            {
+                                # code...
+                            $output .= '<img src="_assets/img/productos/'.$producto_seleccionado['foto_producto'].'" width="200">';
+                            }else 
+                            {
+                            # code...
+                            $output .= '<img src="_assets/img/productos/default.jpg" width="100">';
+                            }
                         
-                                     $output .= '                
-                                        
-                                    </div>
-                                    <div class="col-sm">
-                                    <h1>'.$producto_seleccionado['nombre_producto'].'</h1>
-                                    <h3> Descripcion: <br>'.$producto_seleccionado['descripcion_producto'].'</h3>
-                                    <h2>'.$producto_seleccionado['precio_producto'].'$</h2>
-                                    <button type="button" class="btn btn-primary">Comprar</button>
-                                    </div> 
-                                    <! -- Aquí es donde le das la estructura que quieres a tu pagina de detalles de producto, gei -->
-                                 </div>    
-                            </div>
+                        $output .= '                
+                            <h1>'.$producto_seleccionado['nombre_producto'].'</h1>
+                            <h2>'.$producto_seleccionado['precio_producto'].'</h2>
+                            <! -- Aquí es donde le das la estructura que quieres a tu pagina de detalles de producto, gei -->
+                
+                    </div>
+                </div>    
+            </div>
             ';
         }
         else
@@ -166,6 +161,7 @@ class Market {
             $output .= '
             <div class="container mt-5">
                 <div class="row">';
+               
                 foreach ($this->get_products() as $product)
                 { 
                     /*$categoria  = $this->get_product_category($product['id_categoria']);
@@ -174,9 +170,24 @@ class Market {
                     <a class="col-sm" href="./?action=product_details&prod_id='.$product['id_producto'].'" style="text-decoration:none;">
                         <div class="card">
                             <div class="card-body">
+                            <center>';
+                            
+
+                            if ($product['foto_producto'])
+                            {
+                                # code...
+                            $output .= '<img src="_assets/img/productos/'.$product['foto_producto'].'" height="200">';
+                            }else 
+                            {
+                            # code...
+                            $output .= '<img src="_assets/img/productos/default.jpg" width="100">';
+                            }
+                            $output .= ' 
+                            
                                 <h3>'.$product['nombre_producto'].'</h3>
                                 '.$product['descripcion_producto'].'<br>
                                 $'.$product['precio_producto'].'
+                            <center>
                             </div>
                         </div>
                     </a>'; 

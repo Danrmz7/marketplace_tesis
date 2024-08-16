@@ -21,8 +21,8 @@ header("Cache-control: private");
     require('phpCommon/BlockXSS.class.php');
     require('phpCommon/MySqlPdoHandler.class.php');
     require('phpCommon/addStripSlashes.php');
-
     require('phpCommon/SecureV2.class.php');
+
     require('market.class.php');
     // require('products.class.php');
 
@@ -30,7 +30,7 @@ header("Cache-control: private");
     $MySqlHandler->connect($database_name);
     $MySqlHandler->Query("SET NAMES utf8");
 
-    $secure     = new Secure($MySqlHandler, $database_name, $table_users, $unField, $psField, $idField, 'remember_me' , '', 'pos_secure', 'login.php', true);
+    $secure      = new Secure($MySqlHandler, $database_name, $table_users, $unField, $psField, $idField, 'remember_me' , '', 'pos_secure', 'login.php', true);
     $Market      = new Market($MySqlHandler, $secure->getCurrentUser());
     // $Productos      = new Products($MySqlHandler/*, $secure->getCurrentUser()*/);
 

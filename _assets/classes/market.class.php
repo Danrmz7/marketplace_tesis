@@ -347,9 +347,9 @@ class Market {
                             $output .= '<img src="_assets/img/productos/default.jpg" width="100">';
                             }
                             $output .= ' 
-                            
+                                <hr>
                                 <h3>'.$product['nombre_producto'].'</h3>
-                                '.$product['descripcion_producto'].'<br>
+                                <hr>
                                 $'.$product['precio_producto'].'
                             <center>
                             </div>

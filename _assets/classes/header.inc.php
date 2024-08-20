@@ -22,7 +22,7 @@ header("Cache-control: private");
     require('phpCommon/MySqlPdoHandler.class.php');
     require('phpCommon/addStripSlashes.php');
     require('phpCommon/SecureV2.class.php');
-
+    require('class.Cart.php');
     require('market.class.php');
     // require('products.class.php');
 
@@ -31,8 +31,19 @@ header("Cache-control: private");
     $MySqlHandler->Query("SET NAMES utf8");
 
     $secure      = new Secure($MySqlHandler, $database_name, $table_users, $unField, $psField, $idField, 'remember_me' , '', 'pos_secure', 'login.php', true);
-    $Market      = new Market($MySqlHandler, $secure->getCurrentUser());
+   
+    $cart        = new Cart([
+        // Can add unlimited number of item to cart
+        'cartMaxItem'      => 0,
+        
+        // Set maximum quantity allowed per item to 99
+        'itemMaxQuantity'  => 99,
+        
+        // Do not use cookie, cart data will lost when browser is closed
+        'useCookie'        => false,
+      ]);
     // $Productos      = new Products($MySqlHandler/*, $secure->getCurrentUser()*/);
+    $Market      = new Market($MySqlHandler, $secure->getCurrentUser(), $cart);
 
 
     if($get_user = $secure->getCurrentUser()){
@@ -44,6 +55,7 @@ header("Cache-control: private");
             die();
         }
     }
+
     
 
 ?>

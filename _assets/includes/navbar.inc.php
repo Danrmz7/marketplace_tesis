@@ -17,9 +17,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Recompensas</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="./?action=view_cart">Carrito</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <!-- <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
                         <a class="nav-link" href="./?logout=1">Cerrar Sesión De <?php echo $get_user['nombre_comprador']; ?></a>
@@ -36,6 +36,7 @@
 
         <div class="navbar bg-body-tertiary">
                 <a class="nav-link" href="#"><img src="_assets/img/coin.png" width="20"> <?php print $get_user['dino_coins']; ?></a>
+                <a class="nav-link" href="./?action=view_cart">&nbsp; <i class="fa-solid fa-cart-shopping"></i> (<?php print $cart->getTotalItem(); ?>)</a>
         </div>
  
     </div>

@@ -259,13 +259,25 @@ class Market {
                         <hr>
                         
                         <!-- ------ Agregamos la funcionalidad del carrito ------ -->
-                        <h3>Agregar al carrito</h3><br>
-                        <form action="./?action=add_product_cart" method="post" class="input-group mb-3">
-                            <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
-                            <input type="number" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
-                            <button class="btn btn-success" type="submit" id="button-addon1">Agregar</button>
-                        </form>
+                        <h3>Agregar al carrito</h3><br>';
+                        if (!$this->cart->isItemExists($producto_seleccionado['id_producto']))
+                        {
+                            $output .= '
+                            <form action="./?action=add_product_cart" method="post" class="input-group mb-3">
+                                <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
+                                <input type="number" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
+                                <button class="btn btn-success" type="submit" id="button-addon1"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
+                            </form>
+                            ';
+                        }
+                        else
+                        {
+                            $output .= '
 
+                            <h4 style="color:darkgreen;"><i class="fa-solid fa-check"></i> | El producto esta agregado</h4>
+                            ';
+                        }
+                        $output .= '
                     </div>
                 </div>    
             </div>
@@ -315,6 +327,9 @@ class Market {
                     $output .= '
                     </tbody>
                 </table>
+                <hr>
+                <button class="btn btn-danger"> Vaciar Carrito</button>
+                <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
             </div>
             ';
 

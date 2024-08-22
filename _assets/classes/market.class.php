@@ -248,12 +248,12 @@ class Market {
                         $output .= '                
                             <h1>'.$producto_seleccionado['nombre_producto'].'</h1>
                             <h3>$ '.$producto_seleccionado['precio_producto'].'</h3>
-                            <! -- Aquí es donde le das la estructura que quieres a tu pagina de detalles de producto, gei -->
+                            <! -- Aquí es donde le das la estructura que quieres a tu pagina de detalles de producto -->
                 
                     </div>
 
                     <div class="col"> 
-                        <h3>Detalles de tu cola</h3>
+                        <h3>Detalles del producto</h3>
                         '.$producto_seleccionado['descripcion_producto'].'<br>
                         '.$producto_seleccionado['fecha_pub_producto'].'
                         <hr>
@@ -346,7 +346,7 @@ class Market {
                     /*$categoria  = $this->get_product_category($product['id_categoria']);
                     $usuario = $this->get_product_user($product['id_usuario']);*/
                     $output .= '
-                    <a class="col-sm" href="./?action=product_details&prod_id='.$product['id_producto'].'" style="text-decoration:none;">
+                    <a class="col-sm mb-5" href="./?action=product_details&prod_id='.$product['id_producto'].'" style="text-decoration:none;">
                         <div class="card">
                             <div class="card-body">
                             <center>';
@@ -355,17 +355,16 @@ class Market {
                             if ($product['foto_producto'])
                             {
                                 # code...
-                            $output .= '<img src="_assets/img/productos/'.$product['foto_producto'].'" height="200">';
+                            $output .= '<img src="_assets/img/productos/'.$product['foto_producto'].'" width="200" height="200">';
                             }else 
                             {
                             # code...
-                            $output .= '<img src="_assets/img/productos/default.jpg" width="100">';
+                            $output .= '<img src="_assets/img/productos/default.jpg" width="100" height="100">';
                             }
                             $output .= ' 
                                 <hr>
                                 <h3>'.$product['nombre_producto'].'</h3>
-                                <hr>
-                                $'.$product['precio_producto'].'
+                                <h5 style="color:darkblue;">$'.$product['precio_producto'].'</h5>
                             <center>
                             </div>
                         </div>

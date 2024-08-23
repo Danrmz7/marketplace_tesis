@@ -76,7 +76,7 @@ class Market {
                 {
                     $alert = '
                     <div class="alert alert-success">
-                        <strong>Success!</strong> Producto Agregado
+                        <strong>Success!</strong> Producto eliminado
                     </div> ';
                     $output .= $this->show_all_rows($alert);
                     return $output;
@@ -84,11 +84,23 @@ class Market {
                 {
                     $alert = '
                     <div class="alert alert-danger">
-                        <strong>Error!</strong> Producto NO Agregado
+                        <strong>Error!</strong> Producto NO eliminado
                     </div> ';
                     $output .= $this->show_all_rows($alert);
                     return $output;
                 }
+            break;
+
+            case 'destroy_cart':
+                if($this->cart->destroy())
+                {
+                    $alert = '
+                    <div class="alert alert-success">
+                        <strong>Success!</strong> Carrito Vaciado
+                    </div> ';
+                }
+                $output .= $this->show_all_rows($alert);
+                return $output;
             break;
 
             default:
@@ -187,6 +199,7 @@ class Market {
             return false;
         }
      }
+
      
      /*public function get_product_user($id_us)
     {
@@ -211,7 +224,11 @@ class Market {
 
     public function show_all_rows($alert='')
     {   
-        if ($this->action=="delete_product_cart")
+        if($this->action=="confirm_sale")
+        {$this->_user['nombre_usuario'];
+             $output .= 'Hola';
+        }
+        else if ($this->action=="delete_product_cart")
         { 
             $producto_seleccionado = $this->get_product_details($this->getData['id_product']);
             
@@ -289,7 +306,13 @@ class Market {
 
             $output .= '
             <div class="container mt-4">
-                <h2>Mi Carrito De Compras</h2>
+                <h2>Mi Carrito De Compras</h2>';
+                if($this->cart->isEmpty())
+                {
+                    $output .= 'El carrito esta vacio';
+                }else
+                {
+                    $output .= '
                 <hr>
                 <table class = "table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -328,10 +351,16 @@ class Market {
                     </tbody>
                 </table>
                 <hr>
-                <button class="btn btn-danger"> Vaciar Carrito</button>
-                <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
+                    <form action="./?action=destroy_cart" method="POST">
+                        <button type="submit" class="btn btn-danger"> Vaciar Carrito</button>
+                    </form>
+                </hr>
+                    <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
+                
             </div>
             ';
+                }
+                
 
         }
         else

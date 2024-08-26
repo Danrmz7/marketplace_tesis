@@ -103,6 +103,7 @@ class Market {
                 return $output;
             break;
 
+
             default:
                 $output.= $this->show_all_rows();
                 return $output;
@@ -201,20 +202,20 @@ class Market {
      }
 
      
-     /*public function get_product_user($id_us)
+     public function get_reward()
     {
-        $query = "SELECT * from usuarios where id_usuario = ?";
-        $params_query = array($id_us);
+        $query = "SELECT * from recompensas";
+        $params_query = array();
 
         if($rs = $this->sql->select($query, $params_query))
         {
-            return $rs[0];
+            return $rs;
         }
         else
         {
             return false;
         }
-    }*/
+    }
 
 
 
@@ -225,8 +226,80 @@ class Market {
     public function show_all_rows($alert='')
     {   
         if($this->action=="confirm_sale")
-        {$this->_user['nombre_usuario'];
-             $output .= 'Hola';
+        {
+            $allItems = $this->cart->getItems();
+            $output .= '
+            <h1> Confirmar compra </h1>
+            <hr>
+            <form action="products.php?action=confirm_form" method="POST">
+                <input value="'.$this->_user['nombre_comprador'].'" type="hidden" name="id_product" >
+
+            </form>
+            <h3>Resumen de compra</h3>
+            <div class="row">
+                <div class="col-md">
+                    <ul class="list-group col-md">';
+                        foreach ($allItems as $items)
+                        {
+                            foreach ($items as $item)
+                            {
+                                $detalles_de_producto_agregado = $this->get_product_added($item['id']);
+                                $subtotal = ($detalles_de_producto_agregado['precio_producto'] * $item['quantity']);
+                                $output .= '
+                                <tr>
+                                    <!-- <td>'.$item['id'].'</td> -->
+                                    <li class="list-group-item">
+                                        <a class="col-sm mb-5" href="./?action=product_details&prod_id='.$item['id'].'">
+                                            <b>'.$detalles_de_producto_agregado['nombre_producto'].'</b></a> 
+                                            - $ '.$subtotal.'
+                                            <input value="'.$item['id'].'" type="text" name="id_product" >
+                                    </li>
+                                </tr>
+                                ';
+                                $total_compra = $subtotal + $total_compra;
+                            }
+                        }
+                        $output .= ' 
+                    </ul>
+                </div>
+
+                <div class="col-md card text-bg-light">
+                    <div class="card-body">
+                        <h3>Mis DinoCoins</h3>
+                        <i class="fa-solid fa-money-bill"></i> - $'.$this->_user['dino_coins'].'<br>
+                        Total compra: $'.$total_compra.'
+                    </div>';
+                    foreach ($this->get_reward() as $reward)
+                    { 
+                        $output .= '
+                         
+                          <div class="card-body">   
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-sm">';
+                                 $output .='' .$reward['titulo_recompensa'].'"';
+
+                                 $output .= '
+                                </div>
+                                <div class="col-sm">';
+                                $output .='' .$reward['titulo_recompensa'].'"';
+                                 $output .='
+                                </div>
+                                <div class="col-sm">
+                                  One of three columns
+                                </div>
+                              </div>
+                            </div>
+                          </div>                 
+                        ';
+                    }
+                    $output .= '    
+                </div>
+            </div>
+            <hr>
+            <button type="submit" class="btn btn-success">Confirmar o eres gei</button>';
+
+            
         }
         else if ($this->action=="delete_product_cart")
         { 

@@ -20,7 +20,7 @@ class Market {
       
       $this->sql        = $sql;
       $this->_user      = $getCurrentUser;
-      $this->cart       = $cart;      
+      $this->cart       = $cart;  
     }
   
     /** 
@@ -202,19 +202,19 @@ class Market {
      }
 
      
-     public function get_reward()
+     public function get_reward_details()
     {
-        $query = "SELECT * from recompensas";
-        $params_query = array();
-
-        if($rs = $this->sql->select($query, $params_query))
-        {
-            return $rs;
-        }
-        else
-        {
-            return false;
-        }
+        $query = "SELECT * from recompensas where id_recompensa = ?";
+         $params_query = array($id_prod);
+ 
+         if($rs = $this->sql->select($query, $params_query))
+         {
+             return $rs[0];
+         }
+         else
+         {
+             return false;
+         }
     }
 
 
@@ -250,9 +250,10 @@ class Market {
                                     <!-- <td>'.$item['id'].'</td> -->
                                     <li class="list-group-item">
                                         <a class="col-sm mb-5" href="./?action=product_details&prod_id='.$item['id'].'">
+                                        
                                             <b>'.$detalles_de_producto_agregado['nombre_producto'].'</b></a> 
                                             - $ '.$subtotal.'
-                                            <input value="'.$item['id'].'" type="text" name="id_product" >
+                                            <input value="'.$item['id'].'" type="hidden" name="id_product" >
                                     </li>
                                 </tr>
                                 ';
@@ -269,30 +270,26 @@ class Market {
                         <i class="fa-solid fa-money-bill"></i> - $'.$this->_user['dino_coins'].'<br>
                         Total compra: $'.$total_compra.'
                     </div>';
-                    foreach ($this->get_reward() as $reward)
+                    $recompensa_seleccionado = $this->get_reward_details($this->getData['rew_id']);
+                 
+                    foreach ($rewrd as $reward)
                     { 
+                        $detalle_de_recompensa = $this->get_reward($reward['id_recompensa']);
                         $output .= '
                          
                           <div class="card-body">   
                             <div class="container">
                               <div class="row">
-                                <div class="col-sm">';
-                                 $output .='' .$reward['titulo_recompensa'].'"';
-
-                                 $output .= '
-                                </div>
-                                <div class="col-sm">';
-                                $output .='' .$reward['titulo_recompensa'].'"';
-                                 $output .='
-                                </div>
                                 <div class="col-sm">
-                                  One of three columns
+                                <input value="'.$reward['titulo_recompensa'].'" type="text" name="id_recompensa" > 
+                                <input value="'.$reward['titulo_recompensa'].'" type="text" name="id_recompensa" > 
                                 </div>
                               </div>
                             </div>
                           </div>                 
                         ';
                     }
+
                     $output .= '    
                 </div>
             </div>

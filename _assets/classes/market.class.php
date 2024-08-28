@@ -201,21 +201,20 @@ class Market {
         }
      }
 
-     
-     public function get_reward_details()
-    {
-        $query = "SELECT * from recompensas where id_recompensa = ?";
-         $params_query = array($id_prod);
- 
-         if($rs = $this->sql->select($query, $params_query))
-         {
-             return $rs[0];
-         }
-         else
-         {
-             return false;
-         }
-    }
+     public function get_reward()
+     {
+        $query = "SELECT * from recompensas";
+        $params_query = array();
+
+        if($rs = $this->sql->select($query, $params_query))
+        {
+            return $rs;
+        }
+        else
+        {
+            return false;
+        }
+     }
 
 
 
@@ -270,31 +269,33 @@ class Market {
                         <i class="fa-solid fa-money-bill"></i> - $'.$this->_user['dino_coins'].'<br>
                         Total compra: $'.$total_compra.'
                     </div>';
-                    $recompensa_seleccionado = $this->get_reward_details($this->getData['rew_id']);
-                 
-                    foreach ($rewrd as $reward)
-                    { 
-                        $detalle_de_recompensa = $this->get_reward($reward['id_recompensa']);
                         $output .= '
-                         
-                          <div class="card-body">   
-                            <div class="container">
-                              <div class="row">
-                                <div class="col-sm">
-                                <input value="'.$reward['titulo_recompensa'].'" type="text" name="id_recompensa" > 
-                                <input value="'.$reward['titulo_recompensa'].'" type="text" name="id_recompensa" > 
-                                </div>
-                              </div>
-                            </div>
-                          </div>                 
-                        ';
-                    }
+                        <div class="container mt-5">
+                            <div class="row">
+                                '.$alert;
+                       
+                                foreach ($this-> get_reward() as $rwrd)
+                                 { 
+                                $output .= '
+                                <div class="card">
+                                    <div class="card-body">
+                                        <input value="'.$rwrd['id_recompensa'].'" type="hidden" name="id_product" >
+                                        <input value="'.$rwrd['titulo_recompensa'].'" type="button" name="id_product"> 
+                                    </div>
+                                </div>';
+                            
+                                $output .= ' 
 
-                    $output .= '    
+                            </div>
+                        </div>'; 
+                        }
+                 $output .= '    
+                        <button type="submit" class="btn btn-success">Confirmar compra</button>
                 </div>
+                
             </div>
             <hr>
-            <button type="submit" class="btn btn-success">Confirmar o eres gei</button>';
+            ';
 
             
         }

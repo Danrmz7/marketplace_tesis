@@ -103,6 +103,27 @@ class Market {
                 return $output;
             break;
 
+            case 'confirm_form':
+                if($this->insert_confirm_form())
+                {
+                    $alert = '
+                    <div class="alert alert-success">
+                        <strong>Success!</strong> Compra Realizada
+                    </div> ';
+                    $output .= $this->show_all_rows($alert);
+                    return $output;
+                }
+                else
+                {
+                    $alert = '
+                    <div class="alert alert-danger">
+                        <strong>Success!</strong> Compra NO Realizada
+                    </div> ';
+                    $output .= $this->show_all_rows($alert);
+                    return $output;
+                }
+            break;
+
 
             default:
                 $output.= $this->show_all_rows();
@@ -216,6 +237,68 @@ class Market {
         }
      }
 
+     public function insert_confirm_form()
+     {
+        /* $query = "INSERT INTO ventas (id_comprador,fecha_compra,id_recompensa) VALUES (?,?,?)";
+        $params_query = array(
+            $this->postData['nombre_comprador'],
+            $this->postData['nuevoDescripcion'],
+            $this->postData['id_recompensa']
+        );
+
+        if($this->sql->insert($query, $params_query))
+        
+        {
+            $query = "SELECT * from ventas where id_venta = ?";
+            $params_query = array($this->getData['id_venta']);
+            if($rs = $this->sql->select($query, $params_query))
+            {
+                $ultim_venta = $rs[0];
+                $allItems = $this -> cart -> getItems();
+                foreach($allItems as $items)
+                {
+                    foreach($items as $item)
+                    {
+                        $params_query = array($ultim_venta['id_venta']);
+                    }
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }      */
+        
+        $fecha_actual = date("Y-m-d");
+        $query = "INSERT INTO ventas (id_comprador,fecha_compra,id_recompensa) VALUES (?,?,0)";
+        $params_query = array(
+            $this->postData['id_comprador'],
+            $fecha_actual,
+            // $this->postData['id_recompensa']
+        );
+
+        if($this->sql->insert($query, $params_query))
+        {
+            $query = "SELECT * from ventas where id_comprador = ? order by id_venta ASC";
+            $params_query = array($this->postData['id_comprador']);
+            
+            if ($rs = $this->sql->select($query, $params_query))
+            {
+                $this->cart->destroy();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
+        else
+        {
+            return false;
+        }
+
+     }
 
 
     /***
@@ -230,10 +313,10 @@ class Market {
             $output .= '
             <h1> Confirmar compra </h1>
             <hr>
-            <form action="products.php?action=confirm_form" method="POST">
-                <input value="'.$this->_user['nombre_comprador'].'" type="hidden" name="id_product" >
+            <form action="./?action=confirm_form" method="POST">
+                <input value="'.$this->_user['id_comprador'].'" type="hidden" name="id_comprador" >
 
-            </form>
+            
             <h3>Resumen de compra</h3>
             <div class="row">
                 <div class="col-md">
@@ -267,33 +350,33 @@ class Market {
                     <div class="card-body">
                         <h3>Mis DinoCoins</h3>
                         <i class="fa-solid fa-money-bill"></i> - $'.$this->_user['dino_coins'].'<br>
-                        Total compra: $'.$total_compra.'
-                    </div>';
+                        <i class="fa-solid fa-coins"></i> - Total compra: $'.$total_compra.'
+                    ';
                         $output .= '
-                        <div class="container mt-5">
-                            <div class="row">
-                                '.$alert;
-                       
-                                foreach ($this-> get_reward() as $rwrd)
-                                 { 
-                                $output .= '
-                                <div class="card">
-                                    <div class="card-body">
-                                        <input value="'.$rwrd['id_recompensa'].'" type="hidden" name="id_product" >
-                                        <input value="'.$rwrd['titulo_recompensa'].'" type="button" name="id_product"> 
-                                    </div>
-                                </div>';
+                        <hr>
+                        <div class="mt-1">
+                            <h5>Recompensas disponibles</h5>
                             
-                                $output .= ' 
-
+                            <select class="form-control" name="id_recompensa">';
+                       
+                            foreach ($this-> get_reward() as $rwrd)
+                            { 
+                                $output .= '
+                                    <option value="'.$rwrd['id_recompensa'].'">'.$rwrd['titulo_recompensa'].'</option>';
+                            }
+                            $output .= ' 
+                                </select>
                             </div>
                         </div>'; 
-                        }
-                 $output .= '    
-                        <button type="submit" class="btn btn-success">Confirmar compra</button>
+                        
+                 $output .= '
+                        
+                        </div>
+                        <div class="container">
+                            <button type="submit" class="btn btn-success">Confirmar compra</button>
+                        </div>
+                    </form>
                 </div>
-                
-            </div>
             <hr>
             ';
 

@@ -238,37 +238,7 @@ class Market {
      }
 
      public function insert_confirm_form()
-     {
-        /* $query = "INSERT INTO ventas (id_comprador,fecha_compra,id_recompensa) VALUES (?,?,?)";
-        $params_query = array(
-            $this->postData['nombre_comprador'],
-            $this->postData['nuevoDescripcion'],
-            $this->postData['id_recompensa']
-        );
-
-        if($this->sql->insert($query, $params_query))
-        
-        {
-            $query = "SELECT * from ventas where id_venta = ?";
-            $params_query = array($this->getData['id_venta']);
-            if($rs = $this->sql->select($query, $params_query))
-            {
-                $ultim_venta = $rs[0];
-                $allItems = $this -> cart -> getItems();
-                foreach($allItems as $items)
-                {
-                    foreach($items as $item)
-                    {
-                        $params_query = array($ultim_venta['id_venta']);
-                    }
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }      */
-        
+     {        
         $fecha_actual = date("Y-m-d");
         $query = "INSERT INTO ventas (id_comprador,fecha_compra,id_recompensa) VALUES (?,?,0)";
         $params_query = array(
@@ -279,19 +249,31 @@ class Market {
 
         if($this->sql->insert($query, $params_query))
         {
-            $query = "SELECT * from ventas where id_comprador = ? order by id_venta ASC";
-            $params_query = array($this->postData['id_comprador']);
+            $query = "SELECT id_venta from ventas where id_comprador = ? order by id_venta DESC Limit 1;";
+            $params_query = array($this->_user['id_comprador']);
             
             if ($rs = $this->sql->select($query, $params_query))
             {
-                $this->cart->destroy();
-                return true;
+                //$this->cart->destroy();
+                $allItems = $this->cart->getItems();
+                $ultima_venta = $rs[0];
+                foreach ($allItems as $items)
+                {
+                    foreach ($items as $item)
+                    {
+                        $query = "INSERT INTO carrito_productos (id_carrito, id_producto) VALUES (?,?)";
+                        $params_query = array($ultima_venta['id_venta'], $item['id']);
+                        $this->sql->insert($query, $params_query);
+                        // $params_query2 = array(1, 14);                        
+                    }
+                }
             }
             else
             {
                 return false;
             }
-            
+            $this->cart->destroy();
+            return true;
         }
         else
         {
@@ -507,9 +489,9 @@ class Market {
                 <hr>
                     <form action="./?action=destroy_cart" method="POST">
                         <button type="submit" class="btn btn-danger"> Vaciar Carrito</button>
+                        <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
                     </form>
                 </hr>
-                    <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
                 
             </div>
             ';

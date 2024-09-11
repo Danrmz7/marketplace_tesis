@@ -261,11 +261,19 @@ class Market {
                 {
                     foreach ($items as $item)
                     {
+                        $subtotal = ($detalles_de_producto_agregado['precio_producto'] * $item['quantity']);
                         $query = "INSERT INTO carrito_productos (id_carrito, id_producto) VALUES (?,?)";
                         $params_query = array($ultima_venta['id_venta'], $item['id']);
                         $this->sql->insert($query, $params_query);
-                        // $params_query2 = array(1, 14);                        
+                        // $params_query2 = array(1, 14);        
+                        $total_compra = $subtotal + $total_compra;
                     }
+                }
+                $dinero_comprador = $this->_user['dino_coins'];
+                $total_dinero_comprador = $dinero_comprador - $total_compra;
+                if (!$this->im_looking_for_uhm($total_dinero_comprador, $this->_user['id_comprador']))
+                {
+                    return false;
                 }
             }
             else
@@ -273,7 +281,8 @@ class Market {
                 return false;
             }
             $this->cart->destroy();
-            return true;
+            return true;            
+            
         }
         else
         {
@@ -281,6 +290,22 @@ class Market {
         }
 
      }
+
+    public function im_looking_for_uhm($nuevo_dinero, $usuario_activo)
+    {
+        $query = "UPDATE compradores SET dino_coins = ? WHERE id_comprador = ?";
+        $params_query = array($nuevo_dinero, $usuario_activo);
+
+        if ($this->sql->update($query, $params_query))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
 
 
     /***
@@ -355,11 +380,20 @@ class Market {
                         
                         </div>
                         <div class="container">
-                            <button type="submit" class="btn btn-success">Confirmar compra</button>
+                        <hr>';
+                        if ($this->_user['dino_coins'] >= $total_compra)
+                        {
+                            $output .= '<button type="submit" class="btn btn-success">Confirmar compra</button>';
+                        }
+                        else
+                        {
+                            $output .= '<button disabled type="submit" class="btn btn-success">Confirmar compra</button>
+                            <p class="text-danger">Fondos insuficientes</p>';
+                        }
+                        $output .= '
                         </div>
                     </form>
                 </div>
-            <hr>
             ';
 
             

@@ -12,7 +12,7 @@
                     </li>
                     <li class="nav-item">
 
-                    <a class="nav-link" href="#">Categorias</a>
+                    <a class="nav-link" href="./?action=view_purchases">Mis Compras</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Recompensas</a>
@@ -20,10 +20,6 @@
                     <!-- <li class="nav-item">
                         <a class="nav-link" href="./?action=view_cart">Carrito</a>
                     </li> -->
-                    <li class="nav-item">
-                        <!-- <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
-                        <a class="nav-link" href="./?logout=1">Cerrar Sesión De <?php echo $get_user['nombre_comprador']; ?></a>
-                    </li>
                     <li class="nav-item">
                         <!-- <a class="nav-link disabled" aria-disabled="true">Disabled</a> -->
                         <a class="nav-link" href="./?logout=1">Cerrar Sesión De <?php echo $get_user['nombre_comprador']; ?></a>

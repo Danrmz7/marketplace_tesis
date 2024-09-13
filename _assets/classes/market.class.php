@@ -200,7 +200,9 @@ class Market {
      public function add_product_cart()
      {
  
-         if($this->cart->add($this->postData['id_prd'], $this->postData['qty']))
+         if($this->cart->add($this->postData['id_prd'], $this->postData['qty'], [
+              'price'  => $this->postData['price_prd'],
+            ]))
          {
              return true;
          }
@@ -237,6 +239,10 @@ class Market {
         }
      }
 
+
+
+    
+
      public function insert_confirm_form()
      {        
         $fecha_actual = date("Y-m-d");
@@ -261,25 +267,31 @@ class Market {
                 {
                     foreach ($items as $item)
                     {
-                        $subtotal = ($detalles_de_producto_agregado['precio_producto'] * $item['quantity']);
+                        
                         $query = "INSERT INTO carrito_productos (id_carrito, id_producto) VALUES (?,?)";
                         $params_query = array($ultima_venta['id_venta'], $item['id']);
                         $this->sql->insert($query, $params_query);
-                        // $params_query2 = array(1, 14);        
-                        $total_compra = $subtotal + $total_compra;
+                            
+                        
                     }
                 }
                 $dinero_comprador = $this->_user['dino_coins'];
+                $total_compra = $this->cart->getAttributeTotal('price');
                 $total_dinero_comprador = $dinero_comprador - $total_compra;
-                if (!$this->im_looking_for_uhm($total_dinero_comprador, $this->_user['id_comprador']))
-                {
-                    return false;
-                }
+               
+                
             }
             else
             {
                 return false;
             }
+
+
+            if ($this->update_money($total_dinero_comprador)){
+                    
+            }
+
+
             $this->cart->destroy();
             return true;            
             
@@ -291,14 +303,33 @@ class Market {
 
      }
 
-    public function im_looking_for_uhm($nuevo_dinero, $usuario_activo)
-    {
-        $query = "UPDATE compradores SET dino_coins = ? WHERE id_comprador = ?";
-        $params_query = array($nuevo_dinero, $usuario_activo);
 
-        if ($this->sql->update($query, $params_query))
+/** 
+    * @param action
+    * @return null
+    */ 
+  public function update_money($total_dinero_comprador){
+     $query        = "UPDATE `compradores` SET dino_coins = ? WHERE id_comprador = ?; ";
+
+    $params_query = array( $total_dinero_comprador, $this->_user['id_comprador'] );    
+
+      if($article = $this->sql->update($query, $params_query) ) {
+        return true;
+        }else{
+        return false; 
+      }
+
+  }
+
+
+    public function get_purchases()
+    {
+        $query = "select * from ventas where id_comprador = ?";
+        $params_query = array($this->_user['id_comprador']);
+
+        if ($rs = $this->sql->select($query, $params_query))
         {
-            return true;
+            return $rs;
         }
         else
         {
@@ -306,6 +337,38 @@ class Market {
         }
         
     }
+
+    public function get_products_purchased($id_venta)
+    {
+        $query = "select * from carrito_productos where id_carrito = ?";
+        $params_query = array($id_venta);
+
+        if ($rs = $this->sql->select($query, $params_query))
+        {
+            return $rs;
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+    public function get_product_info($id_producto)
+    {
+        $query = "select * from productos where id_producto = ?";
+        $params_query = array($id_producto);
+
+        if ($rs = $this->sql->select($query, $params_query))
+        {
+            return $rs[0];
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+
 
 
     /***
@@ -452,6 +515,7 @@ class Market {
                             $output .= '
                             <form action="./?action=add_product_cart" method="post" class="input-group mb-3">
                                 <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
+                                <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
                                 <input type="number" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
                                 <button class="btn btn-success" type="submit" id="button-addon1"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
                             </form>
@@ -475,7 +539,7 @@ class Market {
             $allItems = $this->cart->getItems(); // Creamos variable para poder recorrer todos los objetos/productos que hay en el carrito. Ya que todo los productos se guardan en un array. En realidad el carrito es un array
 
             $output .= '
-            <div class="container mt-4">
+                <div class="container mt-4">
                 <h2>Mi Carrito De Compras</h2>';
                 if($this->cart->isEmpty())
                 {
@@ -483,55 +547,96 @@ class Market {
                 }else
                 {
                     $output .= '
-                <hr>
-                <table class = "table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <!-- <th>ID Producto</th> -->
-                            <th>Nombre De Product</th>
-                            <th>Precio Unitario</th>
-                            <th>Subtotal</th>
-                            <th>Cantidad</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
+                        <hr>
+                        <table class = "table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <!-- <th>ID Producto</th> -->
+                                    <th>Nombre De Product</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>';
 
-                    foreach ($allItems as $items)
-                    {
-                        foreach ($items as $item)
-                        {
-                            $detalles_de_producto_agregado = $this->get_product_added($item['id']);
-                            $subtotal = ($detalles_de_producto_agregado['precio_producto'] * $item['quantity']);
+                            foreach ($allItems as $items)
+                            {
+                                foreach ($items as $item)
+                                {
+                                    $detalles_de_producto_agregado = $this->get_product_added($item['id']);
+                                    $subtotal = ($detalles_de_producto_agregado['precio_producto'] * $item['quantity']);
+                                    $output .= '
+                                    <tr>
+                                        <!-- <td>'.$item['id'].'</td> -->
+                                        <td>'.$detalles_de_producto_agregado['nombre_producto'].'</td>
+                                        <td>$'.$detalles_de_producto_agregado['precio_producto'].'</td>
+                                        <td>'.$subtotal.'</td>
+                                        <td>'.$item['quantity'].'</td>
+                                        <td>
+                                        <a href = "./?action=delete_product_cart&&id_product='.$item['id'].'" class="btn btn-danger btn-sm">Eliminar producto</a>
+                                        </td>
+                                    </tr>
+                                    ';
+                                }
+                            }
+
                             $output .= '
-                            <tr>
-                                <!-- <td>'.$item['id'].'</td> -->
-                                <td>'.$detalles_de_producto_agregado['nombre_producto'].'</td>
-                                <td>$'.$detalles_de_producto_agregado['precio_producto'].'</td>
-                                <td>'.$subtotal.'</td>
-                                <td>'.$item['quantity'].'</td>
-                                <td>
-                                <a href = "./?action=delete_product_cart&&id_product='.$item['id'].'" class="btn btn-danger btn-sm">Eliminar producto</a>
-                                </td>
-                            </tr>
-                            ';
-                        }
-                    }
-
-                    $output .= '
-                    </tbody>
-                </table>
-                <hr>
-                    <form action="./?action=destroy_cart" method="POST">
-                        <button type="submit" class="btn btn-danger"> Vaciar Carrito</button>
-                        <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
-                    </form>
-                </hr>
-                
-            </div>
-            ';
+                            </tbody>
+                            </table>
+                            <hr>
+                                <form action="./?action=destroy_cart" method="POST">
+                                    <button type="submit" class="btn btn-danger"> Vaciar Carrito</button>
+                                    <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
+                                </form>
+                            </hr>
+                            
+                        </div>
+                        ';
                 }
                 
 
+        }
+        else if($this->action=="view_purchases")
+        {
+            $output .= '
+            <div class="container mt-2">
+                <h1> Mis Compras </h1>
+                <hr>';
+                foreach ($this->get_purchases() as $prch)
+                {
+                    $output .= '
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$prch['id_venta'].'" aria-expanded="false" aria-controls="collapse'.$pr['id_venta'].'">
+                                Compra realizada #'.$prch['id_venta'].'  - '.$prch['fecha_compra'].'
+                            </button>
+                            </h2>
+                            <div id="collapse'.$prch['id_venta'].'" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <ul class="list-group">';
+                                    foreach ($this->get_products_purchased($prch['id_venta']) as $prod)
+                                    {
+                                        $product_details = $this->get_product_info($prod['id_producto']);
+                                        $output .= '<li class="list-group-item">
+                                                        <div class="fw-bold">'.$product_details['nombre_producto'].'</div>
+                                                        # de producto: '.$prod['id_producto'].'
+                                                    </li>';
+                                    }
+                                    $output .= '
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    ';
+                }
+            $output .= '
+            </div>
+            <hr class="mt-5">
+            ';
         }
         else
         {

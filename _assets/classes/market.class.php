@@ -14,6 +14,7 @@ class Market {
     var $current_user;
     var $output;
     var $alert;
+    var $recompensas;
   
     /*---------------------------------*/
     public function __construct($sql, $getCurrentUser, $cart){
@@ -55,16 +56,18 @@ class Market {
                 if($this->add_product_cart())
                 {
                     $alert = '
-                    <div class="alert alert-success">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>Success!</strong> Producto Agregado
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div> ';
                     $output .= $this->show_all_rows($alert);
                     return $output;
                 }else
                 {
                     $alert = '
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong>Error!</strong> Producto NO Agregado
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div> ';
                     $output .= $this->show_all_rows($alert);
                     return $output;
@@ -107,8 +110,11 @@ class Market {
                 if($this->insert_confirm_form())
                 {
                     $alert = '
-                    <div class="alert alert-success">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>Success!</strong> Compra Realizada
+                        <hr>
+                        Recompensas Ganadas: <strong>$'.$this->recompensas.'</strong>
+                        <a href="./"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></a>
                     </div> ';
                     $output .= $this->show_all_rows($alert);
                     return $output;
@@ -116,8 +122,9 @@ class Market {
                 else
                 {
                     $alert = '
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong>Success!</strong> Compra NO Realizada
+                        <a href="./"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></a>
                     </div> ';
                     $output .= $this->show_all_rows($alert);
                     return $output;
@@ -270,8 +277,18 @@ class Market {
                         
                         $query = "INSERT INTO carrito_productos (id_carrito, id_producto) VALUES (?,?)";
                         $params_query = array($ultima_venta['id_venta'], $item['id']);
-                        $this->sql->insert($query, $params_query);
-                            
+                        if ($this->sql->insert($query, $params_query))
+                        {
+                            $query = "SELECT * from productos where id_producto = ?";
+                            $params_query = array($item['id']);
+
+                            if ($rs = $this->sql->select($query, $params_query))
+                            {
+                                $productos_comprados = $rs[0];
+                                $this->recompensas = $productos_comprados['dino_producto'] + $productos_comprados['dino_producto'];
+                            }
+
+                        }                            
                         
                     }
                 }
@@ -291,6 +308,9 @@ class Market {
                     
             }
 
+            if ($this->add_rewards($this->recompensas)){
+                
+            }
 
             $this->cart->destroy();
             return true;            
@@ -321,6 +341,26 @@ class Market {
 
   }
 
+    public function add_rewards($recompensas)
+    {
+        $query = "SELECT * FROM compradores where id_comprador = ?";
+        $params_query = array( $this->_user['id_comprador'] );   
+        
+        if ($rs = $this->sql->select($query, $params_query))
+        {
+            $dinero_usuario = $rs[0];
+            $dinero_acumulado = $dinero_usuario['dino_coins'] + $recompensas;
+
+            $query = "UPDATE `compradores` SET dino_coins = ? WHERE id_comprador = ?; ";
+            $params_query = array( $dinero_acumulado, $this->_user['id_comprador'] );   
+            
+            if($article = $this->sql->update($query, $params_query) ) {
+                return true;
+                }else{
+                return false; 
+            }
+        }
+    }
 
     public function get_purchases()
     {
@@ -484,7 +524,7 @@ class Market {
             $output .= '
             <div class="container mt-5"> 
                 <div class="row">
-                    <div class="col">';
+                    <div class="col"><center>';
                             if ($producto_seleccionado['foto_producto'])
                             {
                                 # code...
@@ -495,22 +535,40 @@ class Market {
                             $output .= '<img src="_assets/img/productos/default.jpg" width="100">';
                             }
                         
-                        $output .= '                
-                            <h1>'.$producto_seleccionado['nombre_producto'].'</h1>
-                            <h3>$ '.$producto_seleccionado['precio_producto'].'</h3>
+                        $output .= '
                             <! -- Aquí es donde le das la estructura que quieres a tu pagina de detalles de producto -->
                 
-                    </div>
+                    </center></div>
 
                     <div class="col"> 
-                        <h3>Detalles del producto</h3>
-                        '.$producto_seleccionado['descripcion_producto'].'<br>
-                        '.$producto_seleccionado['fecha_pub_producto'].'
+                        <h1>'.ucfirst($producto_seleccionado['nombre_producto']).'</h1>
+                        <h3>$ '.$producto_seleccionado['precio_producto'].'</h3>
+                        <hr>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <strong>Descripción:</strong><br>
+                                '.$producto_seleccionado['descripcion_producto'].'</li>
+                            <li class="list-group-item">
+                                <strong>Por cada '.$producto_seleccionado['nombre_producto'].' que compres, te da:</strong><br>
+                                $'.$producto_seleccionado['dino_producto'].'</li>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Descripción:</strong><br>
+                                '.$producto_seleccionado['fecha_pub_producto'].'</li>
+                            </li>
+                        </ul>
                         <hr>
                         
                         <!-- ------ Agregamos la funcionalidad del carrito ------ -->
                         <h3>Agregar al carrito</h3><br>';
-                        if (!$this->cart->isItemExists($producto_seleccionado['id_producto']))
+                        if ($this->cart->isItemExists($producto_seleccionado['id_producto']))
+                        {
+                            $output .= '
+
+                            <h4 style="color:darkgreen;"><i class="fa-solid fa-check"></i> | El producto esta agregado</h4>
+                            ';
+                        }
+                        else
                         {
                             $output .= '
                             <form action="./?action=add_product_cart" method="post" class="input-group mb-3">
@@ -519,13 +577,6 @@ class Market {
                                 <input type="number" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
                                 <button class="btn btn-success" type="submit" id="button-addon1"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
                             </form>
-                            ';
-                        }
-                        else
-                        {
-                            $output .= '
-
-                            <h4 style="color:darkgreen;"><i class="fa-solid fa-check"></i> | El producto esta agregado</h4>
                             ';
                         }
                         $output .= '
@@ -571,10 +622,10 @@ class Market {
                                         <!-- <td>'.$item['id'].'</td> -->
                                         <td>'.$detalles_de_producto_agregado['nombre_producto'].'</td>
                                         <td>$'.$detalles_de_producto_agregado['precio_producto'].'</td>
-                                        <td>'.$subtotal.'</td>
+                                        <td>$'.$subtotal.'</td>
                                         <td>'.$item['quantity'].'</td>
                                         <td>
-                                        <a href = "./?action=delete_product_cart&&id_product='.$item['id'].'" class="btn btn-danger btn-sm">Eliminar producto</a>
+                                        <a href = "./?action=delete_product_cart&&id_product='.$item['id'].'" class="btn btn-danger btn-sm"><i class="fa-solid fa-times"></i></a>
                                         </td>
                                     </tr>
                                     ';

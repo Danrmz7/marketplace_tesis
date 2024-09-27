@@ -285,7 +285,8 @@ class Market {
                             if ($rs = $this->sql->select($query, $params_query))
                             {
                                 $productos_comprados = $rs[0];
-                                $this->recompensas = $productos_comprados['dino_producto'] + $productos_comprados['dino_producto'];
+                                $this->recompensas = $productos_comprados['dino_producto'] * $item['quantity'];
+                                // $this->recompensas = $sub_rec + $sub_rec;
                             }
 
                         }                            
@@ -364,7 +365,7 @@ class Market {
 
     public function get_purchases()
     {
-        $query = "select * from ventas where id_comprador = ?";
+        $query = "select * from ventas where id_comprador = ? order by id_venta desc";
         $params_query = array($this->_user['id_comprador']);
 
         if ($rs = $this->sql->select($query, $params_query))
@@ -591,14 +592,18 @@ class Market {
 
             $output .= '
                 <div class="container mt-4">
-                <h2>Mi Carrito De Compras</h2>';
+                <h2>Mi Carrito De Compras</h2>
+                <hr>';
                 if($this->cart->isEmpty())
                 {
-                    $output .= 'El carrito esta vacio';
+                    $output .= '
+                    <div class="alert alert-primary mt-3">
+                        El carrito esta vacio
+                    </div>
+                    ';
                 }else
                 {
                     $output .= '
-                        <hr>
                         <table class = "table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
@@ -637,8 +642,8 @@ class Market {
                             </table>
                             <hr>
                                 <form action="./?action=destroy_cart" method="POST">
-                                    <button type="submit" class="btn btn-danger"> Vaciar Carrito</button>
                                     <a href="./?action=confirm_sale" class="btn btn-primary"> Confirmar Compra</a>
+                                    <button type="submit" class="btn btn-danger"> Vaciar Carrito</button>
                                 </form>
                             </hr>
                             

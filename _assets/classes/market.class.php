@@ -699,6 +699,10 @@ class Market {
             $output .= '
             <div class="container mt-5">
                 <div class="row">
+                <!-- Button trigger modal -->
+                <button type="button" class= "btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    Tienes <strong>'.$this->_user['dino_coins'].' Dinocoins Gastalos!!!</strong>
+                </button> 
                 '.$alert;
                
                 foreach ($this->get_products() as $product)

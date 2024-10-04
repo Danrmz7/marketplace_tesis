@@ -543,7 +543,7 @@ class Market {
 
                     <div class="col"> 
                         <h1>'.ucfirst($producto_seleccionado['nombre_producto']).'</h1>
-                        <h3>$ '.$producto_seleccionado['precio_producto'].'</h3>
+                        <h3>Costo de $ '.$producto_seleccionado['costo_original_producto'].' Con descuento de $ '.$producto_seleccionado['precio_producto'].'</h3>
                         <hr>
                         <ul class="list-group">
                             <li class="list-group-item">
@@ -554,7 +554,7 @@ class Market {
                                 $'.$producto_seleccionado['dino_producto'].'</li>
                             </li>
                             <li class="list-group-item">
-                                <strong>Descripción:</strong><br>
+                                <strong>Fecha de publicación:</strong><br>
                                 '.$producto_seleccionado['fecha_pub_producto'].'</li>
                             </li>
                         </ul>
@@ -728,7 +728,8 @@ class Market {
                             $output .= ' 
                                 <hr>
                                 <h3>'.$product['nombre_producto'].'</h3>
-                                <h5 style="color:darkblue;">$'.$product['precio_producto'].'</h5>
+                                <h6> Precio Original $'.$product['costo_original_producto'].'</h6>
+                                <h5 style="color:darkblue;">Descuento de $'.$product['precio_producto'].' Dinocoins</h5>
                             <center>
                             </div>
                         </div>

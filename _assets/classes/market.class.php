@@ -584,11 +584,11 @@ class Market {
                                 <button class="btn btn-success" type="submit" id="button-addon1"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
                             </form>
 
-                            <form action="./?action=" method="post" class="input-group mb-3">
+                            <form action="./?action=" method="post">
                                 <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
                                 <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
                                 <input type="hidden" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
-                                <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-store"></i> Compra directa</button>
+                                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-store"></i> Compra directa</button>
                             </form>
                             ';
                         }
@@ -710,11 +710,47 @@ class Market {
         {
             $output .= '
             <div class="container mt-5">
+
+            <div id="carouselExampleRide" class="carousel carousel-dark slide mb-5" data-bs-ride="true">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                <a href="#">
+                    <div class="card">
+                        <div class="card-body" style="padding-left:10%;padding-right:10%;">
+                            <div class="container">
+                                <h2>Vendedor 1</h2>
+                                alkdmalmdaldkmalkmd
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                <div class="carousel-item">
+                <a href="#">
+                    <div class="card">
+                        <div class="card-body" style="padding-left:10%;padding-right:10%;">
+                            <h2>Vendedor 2</h2>
+                            alkdmalmdaldkmalkmd
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            </div>
                 <div class="row">
                 <!-- Button trigger modal -->
-                <button type="button" class= "btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                <button type="button" class= "btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal">
                     Tienes <strong>'.$this->_user['dino_coins'].' Dinocoins Gastalos!!!</strong>
-                </button>  
+                </button>
                 '.$alert;
                
                 foreach ($this->get_products() as $product)

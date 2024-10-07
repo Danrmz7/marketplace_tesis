@@ -554,9 +554,14 @@ class Market {
                                 $'.$producto_seleccionado['dino_producto'].'</li>
                             </li>
                             <li class="list-group-item">
-                                <strong>Fecha de publicación:</strong><br>
-                                '.$producto_seleccionado['fecha_pub_producto'].'</li>
+                                <strong>Tienda:</strong><br>
+                                '.$producto_seleccionado['nombre_usuario'].'</li>
                             </li>
+                            <li class="list-group-item">
+                                <strong>Direccion de tienda:</strong><br>
+                                '.$producto_seleccionado['direccion_usuario'].'</li>
+                            </li>
+                            
                         </ul>
                         <hr>
                         
@@ -577,6 +582,13 @@ class Market {
                                 <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
                                 <input type="number" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
                                 <button class="btn btn-success" type="submit" id="button-addon1"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
+                            </form>
+
+                            <form action="./?action=" method="post" class="input-group mb-3">
+                                <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
+                                <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
+                                <input type="hidden" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
+                                <button class="btn btn-primary" type="submit" id="button-addon1"><i class="fa-solid fa-store"></i> Compra directa</button>
                             </form>
                             ';
                         }
@@ -702,7 +714,7 @@ class Market {
                 <!-- Button trigger modal -->
                 <button type="button" class= "btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                     Tienes <strong>'.$this->_user['dino_coins'].' Dinocoins Gastalos!!!</strong>
-                </button> 
+                </button>  
                 '.$alert;
                
                 foreach ($this->get_products() as $product)

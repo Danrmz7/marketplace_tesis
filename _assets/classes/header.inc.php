@@ -24,6 +24,7 @@ header("Cache-control: private");
     require('phpCommon/SecureV2.class.php');
     require('class.Cart.php');
     require('market.class.php');
+    require('index.class.php');
     // require('products.class.php');
 
     $MySqlHandler =  MySqlPdoHandler::getInstance(); 
@@ -44,7 +45,7 @@ header("Cache-control: private");
       ]);
     // $Productos      = new Products($MySqlHandler/*, $secure->getCurrentUser()*/);
     $Market      = new Market($MySqlHandler, $secure->getCurrentUser(), $cart);
-
+    //$index      = new index($MySqlHandler/*, $secure->getCurrentUser()*/);  
 
     if($get_user = $secure->getCurrentUser()){
 

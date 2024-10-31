@@ -639,7 +639,7 @@ class Market {
 
                     <div class="col"> 
                         <h1>'.ucfirst($producto_seleccionado['nombre_producto']).'</h1>
-                        <h3>$ '.$producto_seleccionado['precio_producto'].'</h3>
+                        <h3>Costo de $ '.$producto_seleccionado['costo_original_producto'].' Con descuento de $ '.$producto_seleccionado['precio_producto'].'</h3>
                         <hr>
                         <ul class="list-group">
                             <li class="list-group-item">
@@ -650,9 +650,14 @@ class Market {
                                 $'.$producto_seleccionado['dino_producto'].'</li>
                             </li>
                             <li class="list-group-item">
-                                <strong>Descripción:</strong><br>
-                                '.$producto_seleccionado['fecha_pub_producto'].'</li>
+                                <strong>Tienda:</strong><br>
+                                '.$producto_seleccionado['nombre_usuario'].'</li>
                             </li>
+                            <li class="list-group-item">
+                                <strong>Direccion de tienda:</strong><br>
+                                '.$producto_seleccionado['direccion_usuario'].'</li>
+                            </li>
+                            
                         </ul>
                         <hr>
                         
@@ -673,6 +678,13 @@ class Market {
                                 <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
                                 <input type="number" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
                                 <button class="btn btn-success" type="submit" id="button-addon1"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
+                            </form>
+
+                            <form action="./?action=" method="post">
+                                <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
+                                <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
+                                <input type="hidden" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
+                                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-store"></i> Compra directa</button>
                             </form>
                             ';
                         }
@@ -841,7 +853,47 @@ class Market {
         {
             $output .= '
             <div class="container mt-5">
+
+            <div id="carouselExampleRide" class="carousel carousel-dark slide mb-5" data-bs-ride="true">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                <a href="#">
+                    <div class="card">
+                        <div class="card-body" style="padding-left:10%;padding-right:10%;">
+                            <div class="container">
+                                <h2>Vendedor 1</h2>
+                                alkdmalmdaldkmalkmd
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                <div class="carousel-item">
+                <a href="#">
+                    <div class="card">
+                        <div class="card-body" style="padding-left:10%;padding-right:10%;">
+                            <h2>Vendedor 2</h2>
+                            alkdmalmdaldkmalkmd
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            </div>
                 <div class="row">
+                <!-- Button trigger modal -->
+                <button type="button" class= "btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal">
+                    Tienes <strong>'.$this->_user['dino_coins'].' Dinocoins Gastalos!!!</strong>
+                </button>
                 '.$alert;
                
                 foreach ($this->get_products() as $product)
@@ -867,7 +919,8 @@ class Market {
                             $output .= ' 
                                 <hr>
                                 <h3>'.$product['nombre_producto'].'</h3>
-                                <h5 style="color:darkblue;">$'.$product['precio_producto'].'</h5>
+                                <h6> Precio Original $'.$product['costo_original_producto'].'</h6>
+                                <h5 style="color:darkblue;">Descuento de $'.$product['precio_producto'].' Dinocoins</h5>
                             <center>
                             </div>
                         </div>

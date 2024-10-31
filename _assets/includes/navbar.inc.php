@@ -15,7 +15,7 @@
                     <a class="nav-link" href="./?action=view_purchases">Mis Compras</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Recompensas</a>
+                        <a class="nav-link" href="./?action=transfer_money">Tranferir Coins</a>
                     </li>
                     <!-- <li class="nav-item">
                         <a class="nav-link" href="./?action=view_cart">Carrito</a>

@@ -131,6 +131,41 @@ class Market {
                 }
             break;
 
+            case 'send_money':
+                if ($this->update_current_money())
+                {
+                    if($this->transfer_money())
+                    {
+                        $alert = '
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>Success!</strong> Transacción Realizada.
+                            <a href="./"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></a>
+
+                        </div> ';
+                        $output .= $this->show_all_rows($alert);
+                    }
+                    else
+                    {
+                        $alert = '
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>Error</strong> Transacción NO Realizada. Fondos Insuficientes.
+                            <a href="./"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></a>
+
+                        </div> ';
+                        $output .= $this->show_all_rows($alert);
+                    }
+                }
+                else
+                {
+                    $alert = '
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>Error</strong> Transacción NO Realizada.
+                            <a href="./"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></a>
+                        </div>';
+                    $output .= $this->show_all_rows($alert);
+                }
+                return $output;
+            break;
 
             default:
                 $output.= $this->show_all_rows();
@@ -231,8 +266,8 @@ class Market {
         }
      }
 
-     public function get_reward()
-     {
+    public function get_reward()
+    {
         $query = "SELECT * from recompensas";
         $params_query = array();
 
@@ -244,11 +279,7 @@ class Market {
         {
             return false;
         }
-     }
-
-
-
-    
+    }
 
      public function insert_confirm_form()
      {        
@@ -324,23 +355,74 @@ class Market {
 
      }
 
+    public function transfer_money()
+    {
+        $query = "SELECT * from compradores where id_comprador = ?;";
+        $params_query = array($this->postData['destinatario']);
+        
+        if ($rs = $this->sql->select($query, $params_query))
+        {
+            $seller = $rs[0];
+            $dinero_vendedor = $seller['dino_coins'];
+            $dinero_transferido = $this->postData['coins'] + $dinero_vendedor;
 
-/** 
+            $query = "UPDATE compradores SET dino_coins = ? WHERE id_comprador = ?; ";
+            $params_query = array( $dinero_transferido, $this->postData['destinatario']);    
+
+            if($this->sql->update($query, $params_query) )
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    public function update_current_money()
+    {
+        $query = "SELECT * from compradores where id_comprador = ?;";
+        $params_query = array($this->_user['id_comprador']);
+
+        if ($rs = $this->sql->select($query, $params_query))
+        {
+            $usuario = $rs[0];
+            $dinero_actual = $usuario['dino_coins'];
+            $dinero_final = $dinero_actual - $this->postData['coins'];
+
+            $query = "UPDATE compradores SET dino_coins = ? WHERE id_comprador = ?; ";
+            $params_query = array( $dinero_final, $this->_user['id_comprador']);    
+
+            if($this->sql->update($query, $params_query) )
+            {
+                return true;
+            }
+            
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+
+    /** 
     * @param action
     * @return null
     */ 
-  public function update_money($total_dinero_comprador){
-     $query        = "UPDATE `compradores` SET dino_coins = ? WHERE id_comprador = ?; ";
+    public function update_money($total_dinero_comprador)
+    {
+        $query = "UPDATE `compradores` SET dino_coins = ? WHERE id_comprador = ?; ";
+        $params_query = array( $total_dinero_comprador, $this->_user['id_comprador'] );    
 
-    $params_query = array( $total_dinero_comprador, $this->_user['id_comprador'] );    
-
-      if($article = $this->sql->update($query, $params_query) ) {
-        return true;
+        if($article = $this->sql->update($query, $params_query) ) {
+            return true;
         }else{
-        return false; 
-      }
+            return false; 
+        }
 
-  }
+    }
 
     public function add_rewards($recompensas)
     {
@@ -394,6 +476,7 @@ class Market {
         }
         
     }
+
     public function get_product_info($id_producto)
     {
         $query = "select * from productos where id_producto = ?";
@@ -410,7 +493,20 @@ class Market {
         
     }
 
+    public function get_users()
+    {
+        $query = "SELECT * from compradores where id_comprador != ?";
+        $params_query = array($this->_user['id_comprador']);
 
+        if($rs = $this->sql->select($query, $params_query))
+        {
+            return $rs;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     /***
      * FIN de Funciones SQL
@@ -692,6 +788,53 @@ class Market {
             $output .= '
             </div>
             <hr class="mt-5">
+            ';
+        }
+        else if($this->action=="transfer_money")
+        {
+            $output .= '
+            <div class="container mt-4">
+                <h2>Transferir monedas</h2>
+            
+                <form class="card mt-3" action="./?action=send_money" method="post">
+
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                Monedas a transferir:<br>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" min="1" name="coins">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                Usuario a transferir:<br>
+                                <div class="form-group">
+                                    <select class="form-control" name="destinatario">
+                                        <option value="0">Seleccione un usuario</option>';
+                                        foreach ($this->get_users() as $user)
+                                        {
+                                            $output .= '<option value="'.$user['id_comprador'].'">'.$user['nombre_comprador'].'</option>';
+                                        }
+                                        $output .= '
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                Mi Bolsa:<br>
+                                <strong>$'.number_format($this->_user['dino_coins'], 2, '.', ',').'</strong>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-2">Transferir</button>
+                    </div>
+
+                </form>
+
+            </div>
             ';
         }
         else

@@ -555,7 +555,7 @@ class Market {
 
                 <div class="col-md card text-bg-light">
                     <div class="card-body">
-                        <h3>Mis DinoCoins</h3>
+                        <h3>Mis Puntos</h3>
                         <i class="fa-solid fa-money-bill"></i> - $'.$this->_user['dino_coins'].'<br>
                         <i class="fa-solid fa-coins"></i> - Total compra: $'.$total_compra.'
                     ';
@@ -642,13 +642,14 @@ class Market {
                         <h3>Costo de $ '.$producto_seleccionado['costo_original_producto'].' Con descuento de $ '.$producto_seleccionado['precio_producto'].'</h3>
                         <hr>
                         <ul class="list-group">
-                            <li class="list-group-item">
-                                <strong>Descripción:</strong><br>
-                                '.$producto_seleccionado['descripcion_producto'].'</li>
-                            <li class="list-group-item">
+                        <li class="list-group-item">
                                 <strong>Por cada '.$producto_seleccionado['nombre_producto'].' que compres, te da:</strong><br>
                                 $'.$producto_seleccionado['dino_producto'].'</li>
                             </li>
+                            <li class="list-group-item">
+                                <strong>Descripción:</strong><br>
+                                '.$producto_seleccionado['descripcion_producto'].'</li>
+                            
                             <li class="list-group-item">
                                 <strong>Tienda:</strong><br>
                                 '.$producto_seleccionado['nombre_usuario'].'</li>
@@ -852,7 +853,7 @@ class Market {
         else
         {
             $output .= '
-            <div class="container mt-5">
+            <!-- carrusel de vendedores oculto <div class="container mt-5">
 
             <div id="carouselExampleRide" class="carousel carousel-dark slide mb-5" data-bs-ride="true">
             <div class="carousel-inner">
@@ -888,11 +889,11 @@ class Market {
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
-            </div>
+            </div> -->
                 <div class="row">
                 <!-- Button trigger modal -->
                 <button type="button" class= "btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal">
-                    Tienes <strong>'.$this->_user['dino_coins'].' Dinocoins Gastalos!!!</strong>
+                    Tienes <strong>'.$this->_user['dino_coins'].' Puntos Gastalos!!!</strong>
                 </button>
                 '.$alert;
                
@@ -919,8 +920,8 @@ class Market {
                             $output .= ' 
                                 <hr>
                                 <h3>'.$product['nombre_producto'].'</h3>
-                                <h6> Precio Original $'.$product['costo_original_producto'].'</h6>
-                                <h5 style="color:darkblue;">Descuento de $'.$product['precio_producto'].' Dinocoins</h5>
+                                <h6> Precio $'.$product['costo_original_producto'].' pesos</h6>
+                                <h5 style="color:darkblue;">Paga con puntos hasta '.$product['precio_producto'].'</h5>
                             <center>
                             </div>
                         </div>

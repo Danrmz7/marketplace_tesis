@@ -32,7 +32,7 @@ $process = $index ->process();*/
             <div class="row" style="padding:20px;">
                 <div class="col">
                     Irving Daniel Ramirez<br>
-                    <strong>Market</strong>Place Tesis 2024
+                    <strong>Catal</strong>Place Tesis 2024
                 </div>
                 <div class="col">
                     <strong>Universidad Autónoma de Ciudad Juárez</strong><br>

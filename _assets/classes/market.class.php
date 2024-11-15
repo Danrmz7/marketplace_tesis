@@ -223,6 +223,21 @@ class Market {
          }
      }
 
+     public function get_seller_info($id_seller)
+     {
+         $query = "SELECT * from usuarios where id_usuario = ?";
+         $params_query = array($id_seller);
+ 
+         if($rs = $this->sql->select($query, $params_query))
+         {
+             return $rs[0];
+         }
+         else
+         {
+             return false;
+         }
+     }
+
      public function get_products_info()
      {
          $query = "SELECT * from productos Where id_producto = ?";
@@ -340,6 +355,12 @@ class Market {
                     
             }
 
+            // add money to seller
+            if ($this->update_seller_money($total_compra, $this->postData['id_comprador'])){
+                    
+            }
+
+
             if ($this->add_rewards($this->recompensas)){
                 
             }
@@ -421,6 +442,33 @@ class Market {
         }else{
             return false; 
         }
+
+    }
+
+    public function update_seller_money($total_venta, $id_vendedor)
+    {
+        $query = "SELECT * from usuarios where id_usuario = ?;";
+        $params_query = array($id_vendedor);
+        
+        if ($rs = $this->sql->select($query, $params_query))
+        {
+            $dinero_vendedor = $rs[0];
+            $total_dinero_vendedor = $dinero_vendedor['dino_coins'] + $total_venta;
+            
+            $query = "UPDATE `usuarios` SET dino_coins = ? WHERE id_usuario = ?; ";
+            $params_query = array( $total_dinero_vendedor, $id_vendedor );    
+
+            if($article = $this->sql->update($query, $params_query) ) {
+                return true;
+            }else{
+                return false; 
+            }
+        }
+        else
+        {
+            return false; 
+        }
+        
 
     }
 
@@ -617,6 +665,7 @@ class Market {
         else if ($this->action=="product_details")
         {
             $producto_seleccionado = $this->get_product_details($this->getData['prod_id']); // Creas una variable nueva para acceder a los objetos regresados por tu funcion
+            $vendedor = $this->get_seller_info($producto_seleccionado['id_usuario']);
             
             $output .= '
             <div class="container mt-5"> 
@@ -652,11 +701,11 @@ class Market {
                             
                             <li class="list-group-item">
                                 <strong>Tienda:</strong><br>
-                                '.$producto_seleccionado['nombre_usuario'].'</li>
+                                '.$vendedor['nombre_usuario'].'</li>
                             </li>
                             <li class="list-group-item">
                                 <strong>Direccion de tienda:</strong><br>
-                                '.$producto_seleccionado['direccion_usuario'].'</li>
+                                '.$vendedor['direccion_usuario'].'</li>
                             </li>
                             
                         </ul>
@@ -676,13 +725,15 @@ class Market {
                             $output .= '
                             <form action="./?action=add_product_cart" method="post" class="input-group mb-3">
                                 <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
+                                <input type="hidden" value="'.$vendedor['id_usuario'].'" name="id_vendedor">
                                 <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
                                 <input type="number" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
                                 <button class="btn btn-success" type="submit" id="button-addon1"><i class="fa-solid fa-cart-shopping"></i> Agregar</button>
                             </form>
 
                             <form action="./?action=" method="post">
-                                <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_prd">
+                                <input type="hidden" value="'.$producto_seleccionado['id_producto'].'" name="id_vendedor">
+                                <input type="hidden" value="'.$vendedor['id_usuario'].'" name="id_vendedor">
                                 <input type="hidden" value="'.$producto_seleccionado['precio_producto'].'" name="price_prd">
                                 <input type="hidden" min="1" value="1" class="form-control" style="max-width:200px;" name="qty">
                                 <button class="btn btn-primary" type="submit"><i class="fa-solid fa-store"></i> Compra directa</button>
